@@ -45,35 +45,22 @@
         }
 
         .menu-btn:hover {
-            background-color: #057AFB; /* Цвет фона при наведении */
-            color: white; /* Цвет текста при наведении */
-        }
-
-        .col-constructor-name {
-            font-size: 16px;
+            background-color: #057AFB;
+            color: white;
         }
 
     </style>
 </head>
 <body style="background-color: #f8f9fa;">
-
-<nav class="navbar navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand ml-5" style="color: white; font-family: 'Roboto', sans-serif; font-size: 20px;">
-        <span th:text="${myUserDetails.getUser().firstName}" style="font-weight: bold;font-size: 18px"></span> with
-        roles:
-        <span th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-            <span th:if="${#authorization.expression('hasRole(''USER'')')} "
-                  style="font-weight: lighter">ADMIN USER</span>
-            <span th:unless="${#authorization.expression('hasRole(''USER'')')}">ADMIN</span>
-        </span>
-        <span th:unless="${#authorization.expression('hasRole(''ADMIN'')')}">
-            <span th:if="${#authorization.expression('hasRole(''USER'')')}">USER</span>
-        </span>
-    </a>
-    <form th:action="@{/logout}" th:method="POST" class="d-inline">
-        <button class="btn btn-link text-secondary font-size-20" type="submit">Logout</button>
-    </form>
-</nav>
+<header>
+    <nav class="navbar navbar-dark bg-dark mb-3 fixed-top navbarUser">
+    <span class="navbar-brand" id="navbarUser">
+    </span>
+        <form th:action="@{/logout}" th:method="POST" class="d-inline">
+            <button class="btn btn-link text-secondary font-size-20" type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
 
 <div class="menu">
     <th:block th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
@@ -107,31 +94,13 @@
                        style="background-color: white; width: 100%; font-size: 14px;">
                     <thead>
                     <tr>
-                        <th class="col-constructor-name">ID</th>
-                        <th class="col-constructor-name">Name</th>
-                        <th class="col-constructor-name">Last Name</th>
-                        <th class="col-constructor-name">Roles</th>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Last Name</th>
+                        <th>Role</th>
                     </tr>
                     </thead>
-                    <tbody>
-                    <tr>
-                        <!-- Пример добавления стиля к ячейкам с отступом -->
-                        <td th:text="${myUserDetails.getUser().getId()}"
-                            style="padding-bottom: 5px; padding-right: 5px">Id
-                        </td>
-                        <td th:text="${myUserDetails.getUser().firstName}"
-                            style="padding-bottom: 5px; padding-right: 5px">Name
-                        </td>
-                        <td th:text="${myUserDetails.getUser().lastName}"
-                            style="padding-bottom: 5px; padding-right: 5px">Last Name
-                        </td>
-                        <td style="padding-bottom: 5px; padding-right: 5px">
-                <span th:each="role, iterStat : ${myUserDetails.getUser().roles}">
-                    <span th:text="${role.getName().substring(5)}"></span>
-                    <span th:if="${!iterStat.last}"></span>
-                </span>
-                        </td>
-                    </tr>
+                    <tbody id="tableUser">
                     </tbody>
                 </table>
 
@@ -140,6 +109,7 @@
     </div>
 </div>
 
+<script type="text/javascript" src="/user.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>

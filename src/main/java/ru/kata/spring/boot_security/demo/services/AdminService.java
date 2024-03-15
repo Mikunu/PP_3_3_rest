@@ -10,14 +10,14 @@ public interface AdminService {
 
     User findUserByName(String firstName);
 
-    void updateUser(User person, List<String> roles);
+    void updateUser(User person);
 
     void removeUser(Long id);
 
     User findOneById(Long id);
 
 
-    void create(User user, List<String> roles);
+    void create(User user);
 
     Optional<User> isUserExist(String emil);
 }

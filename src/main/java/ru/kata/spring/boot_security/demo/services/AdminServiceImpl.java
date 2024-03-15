@@ -10,6 +10,7 @@ import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -40,7 +41,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public User findUserByName(String firstName) {
-        Optional<User> user = userRepository.findByFirstName(firstName);
+        Optional<User> user = userRepository.findByFirstNameWithRoles(firstName);
         if (user.isEmpty()) {
             throw new UsernameNotFoundException("User: " + firstName + " not found");
         }
@@ -49,17 +50,17 @@ public class AdminServiceImpl implements AdminService {
 
 
     @Override
-    public void updateUser(User person, List<String> roles) {
-        User beforeUpdate = userRepository.getById(person.getId());
-        person.setPassword(beforeUpdate.getPassword());
-        Set<Role> roleSet = roles.stream()
-                .map(Long::valueOf)
-                .map(roleRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet());
-        person.setRoles(roleSet);
-        userRepository.save(person);
+    public void updateUser(User updatedPerson) {
+
+        User existingPerson = userRepository.findById(updatedPerson.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Person not found with id: " + updatedPerson.getId()));
+
+        existingPerson.setFirstName(updatedPerson.getFirstName());
+        existingPerson.setLastName(updatedPerson.getLastName());
+        existingPerson.setLastName(updatedPerson.getLastName());
+        existingPerson.setPassword(passwordEncoder.encode(updatedPerson.getPassword()));
+        existingPerson.setRoles(updatedPerson.getRoles());
+        userRepository.save(existingPerson);
     }
 
     @Override
@@ -77,20 +78,13 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void create(User user, List<String> roles) {
-        Set<Role> roleSet = roles.stream()
-                .map(Long::valueOf)
-                .map(roleRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet());
-        user.setRoles(roleSet);
+    public void create(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     @Override
     public Optional<User> isUserExist(String name) {
-        return userRepository.findByFirstName(name);
+        return userRepository.findByFirstNameWithRoles(name);
     }
 }

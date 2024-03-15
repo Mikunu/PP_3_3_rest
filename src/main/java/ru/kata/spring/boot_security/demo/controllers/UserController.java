@@ -1,22 +1,31 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import ru.kata.spring.boot_security.demo.security.MyUserDetails;
+import org.springframework.web.bind.annotation.RestController;
+import ru.kata.spring.boot_security.demo.models.User;
+import ru.kata.spring.boot_security.demo.services.UserService;
 
-@Controller
-@RequestMapping("/user")
+import java.security.Principal;
+import java.util.Optional;
+
+
+@RestController
+@RequestMapping("/api/user")
 public class UserController {
 
-    @GetMapping("")
-    public String showUserInfo(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
-        model.addAttribute("myUserDetails", userDetails);
-        return "user/profile";
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+
+    @GetMapping("/showAccount")
+    public ResponseEntity<User> showUserAccount(Principal principal) {
+        Optional<User> optionalUser = userService.loadUserByUsername(principal.getName());
+        return optionalUser.map(user -> new ResponseEntity<>(user, HttpStatus.OK)).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

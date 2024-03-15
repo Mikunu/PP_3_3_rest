@@ -24,12 +24,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByFirstName(username);
+        return userRepository.findByFirstNameWithRoles(username);
     }
 
     @Override
     public Set<Role> getUserRoles(String username) {
-        Optional<User> userOptional = userRepository.findByFirstName(username);
+        Optional<User> userOptional = userRepository.findByFirstNameWithRoles(username);
         return userOptional.map(User::getRoles).orElse(Collections.emptySet());
     }
 }
