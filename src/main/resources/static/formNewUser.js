@@ -1,35 +1,58 @@
-let formDelete = document.forms["formDelete"];
+let formNewUser = document.forms["formNewUser"];
 
-deleteUser();
+createNewUser();
 
-async function deleteModal(id) {
-    const modalDelete = new bootstrap.Modal(document.querySelector('#deleteModal'));
-    await open_fill_modal(formDelete, modalDelete, id);
-    loadRolesForDelete();
-}
-
-function deleteUser() {
-    formDelete.addEventListener("submit", async ev => {
+function createNewUser() {
+    formNewUser.addEventListener("submit", ev => {
         ev.preventDefault();
-        try {
-            const userId = formDelete.querySelector("#delete-id").value;
-            await fetch("http://localhost:8080/api/admin/users/" + userId, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            $('#deleteClose').click();
-            getAllUsers();
-        } catch (error) {
-            console.error(error);
+
+        let rolesForNewUser = [];
+        for (let i = 0; i < formNewUser.roles.options.length; i++) {
+            if (formNewUser.roles.options[i].selected)
+                rolesForNewUser.push({
+                    id: formNewUser.roles.options[i].value,
+                    role: "ROLE_" + formNewUser.roles.options[i].text
+                });
         }
+
+        fetch("http://localhost:8080/api/admin/users/", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                firstName: formNewUser.firstName.value,
+                lastName: formNewUser.lastName.value,
+                password: formNewUser.password.value,
+                roles: rolesForNewUser
+            })
+        }).then(response => {
+            if (!response.ok) {
+                return response.json();
+            } else {
+                return { message: "User updated successfully" };
+            }
+        }).then(data => {
+            if (Array.isArray(data) && data.length > 0 && data[0].defaultMessage) {
+                const validationErrorsElement = document.getElementById("validationErrorsNewUser");
+                validationErrorsElement.innerHTML = "";
+                data.forEach(error => {
+                    validationErrorsElement.innerHTML += `<p>${error.defaultMessage}</p>`;
+                });
+            } else {
+                const validationErrorsElement = document.getElementById("validationErrorsNewUser");
+                validationErrorsElement.innerHTML = "";
+                $('#usersTable').click();
+                getAllUsers();
+            }
+        })
     });
 }
 
-function loadRolesForDelete() {
-    let selectDelete = document.getElementById("delete-roles");
-    selectDelete.innerHTML = "";
+function loadRolesForNewUser() {
+    let selectAdd = document.getElementById("create-roles");
+
+    selectAdd.innerHTML = "";
 
     fetch("http://localhost:8080/api/admin/roles")
         .then(res => res.json())
@@ -37,10 +60,10 @@ function loadRolesForDelete() {
             data.forEach(role => {
                 let option = document.createElement("option");
                 option.value = role.id;
-                option.text = role.name.replace('ROLE_', '');
-                selectDelete.appendChild(option);
+                option.text = role.name.replace('ROLE_', '')
+                selectAdd.appendChild(option);
             });
         })
 }
 
-window.addEventListener("load", loadRolesForDelete);
+window.addEventListener("load", loadRolesForNewUser);

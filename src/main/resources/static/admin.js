@@ -17,7 +17,7 @@ function getCurrentAdmin() {
             <td>${rolesStringAdmin}</td>
             </tr>`;
             tableUserAdmin.innerHTML = data;
-            navbarAdmin.innerHTML = `<b><span>${userAdmin.name}</span></b>
+            navbarAdmin.innerHTML = `<b><span>${userAdmin.firstName}</span></b>
                              <span>with roles:</span>
                              <span>${rolesStringAdmin}</span>`;
         });

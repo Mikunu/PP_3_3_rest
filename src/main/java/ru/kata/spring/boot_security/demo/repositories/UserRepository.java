@@ -10,12 +10,12 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query("SELECT DISTINCT p FROM User p LEFT JOIN FETCH p.roles WHERE p.id = :id")
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.roles WHERE u.id = :id")
     Optional<User> findByUserIdWithRoles(@Param("id") Long id);
 
-    @Query("SELECT DISTINCT p FROM User p LEFT JOIN FETCH p.roles WHERE p.firstName = :firstName")
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.roles WHERE u.firstName = :firstName")
     Optional<User> findByFirstNameWithRoles(@Param("firstName") String firstName);
 
-    @Query("SELECT DISTINCT p FROM User p LEFT JOIN FETCH p.roles")
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.roles")
     List<User> findAllWithRoles();
 }

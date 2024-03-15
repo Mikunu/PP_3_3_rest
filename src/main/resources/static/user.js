@@ -16,6 +16,7 @@ function getCurrentUser() {
             <td>${user.lastName}</td>
             <td>${rolesStringUser}</td>
             </tr>`;
+
             tableUserUser.innerHTML = dataOfUser;
             navbarUser.innerHTML = `<b><span>${user.firstName}</span></b>
                              <span>with roles:</span>

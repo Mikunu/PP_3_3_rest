@@ -25,7 +25,6 @@ public class UserController {
 
     @GetMapping("/showAccount")
     public ResponseEntity<User> showUserAccount(Principal principal) {
-        Optional<User> optionalUser = userService.loadUserByUsername(principal.getName());
-        return optionalUser.map(user -> new ResponseEntity<>(user, HttpStatus.OK)).orElseGet(() -> ResponseEntity.notFound().build());
-    }
+        User user = userService.loadUserByUsername(principal.getName()).get();
+        return new ResponseEntity<>(user, HttpStatus.OK);}
 }
