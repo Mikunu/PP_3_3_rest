@@ -61,12 +61,12 @@ public class AdminController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<?> addNewUser(@RequestBody @Valid User newUser, BindingResult bindingResult) {
+    public ResponseEntity<Object> addNewUser(@RequestBody @Valid User newUser, BindingResult bindingResult) {
 
         userValidator.validate(newUser, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
         }
 
         adminService.create(newUser);
@@ -74,12 +74,12 @@ public class AdminController {
     }
 
     @PatchMapping("/users/{id}")
-    public ResponseEntity<?> update(@RequestBody @Valid User updatedPerson, BindingResult bindingResult) {
+    public ResponseEntity<Object> update(@RequestBody @Valid User updatedPerson, BindingResult bindingResult) {
 
         userValidator.validate(updatedPerson, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
         }
 
         adminService.updateUser(updatedPerson);
